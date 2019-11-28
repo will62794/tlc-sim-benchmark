@@ -4,23 +4,23 @@
 # Benchmark performance of TLC multi-threaded simulation mode.
 #
 
-# Download Grid5k spec to test with.
-wget https://raw.githubusercontent.com/tlaplus/tlaplus/master/general/performance/Grid5k/{MC.tla,MC.cfg,Grid5k.tla}
+# Final stats file.
+statsfile="stats.csv"
+printf "" > $statsfile
+printf "workers,states_per_min\n" >> $statsfile
+tlcjar="tla2tools-faster-progress.jar"
 
-# Download tla tools JAR.
-wget "https://nightly.tlapl.us/dist/tla2tools.jar"
-
-for w in {8,16,24,32,40,48,56,64,72,80,88}; do
-  # Run simulator for several minutes and then collect throughput stats.
-  outfile="sim_${w}_workers.txt"
-  timeout -sHUP 7m java -cp ./tla2tools-faster-progress.jar tlc2.TLC -simulate -depth 50 -workers $w -config MC.cfg MC.tla | tee $outfile
-  grep "states checked" $outfile > "states_generated_${w}_workers.txt"
-done
-
-# Generate final stats.
-printf "" > stats.txt
-for f in states_generate*.txt; do
-	printf $f >> stats.txt
-	printf "," >> stats.txt
-	grep -m 5 "states checked" $f | tail -n 1 | sed -E "s/Progress: (.*) states checked./\1/" >> stats.txt
+# Run simulator for several seconds for different worker counts.
+# Collect state throughput stats for each.
+max_cores="8"
+for w in {1,2,4,8,12,16,20,24,28,32,36,40,44,48}; do
+  duration="20s"
+  depth="50"
+  echo "Running simulation mode with $w workers for duration of $duration"
+  timeout -s SIGKILL $duration java -cp $tlcjar tlc2.TLC -simulate -depth $depth -workers $w -config MC.cfg MC.tla > tlc.out
+  printf $w >> $statsfile 
+  printf "," >> $statsfile
+  throughput=`grep "states.min" tlc.out | tail -1`
+  echo "Mean throughput: $throughput"
+  echo $throughput | cut -d ' ' -f 1  | sed -E "s/,//g" >> $statsfile
 done
