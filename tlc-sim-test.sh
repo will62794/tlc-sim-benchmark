@@ -17,7 +17,7 @@ for w in {1,2,4,8,12,16,20,24,28,32,36,40,44,48}; do
   duration="20s"
   depth="50"
   echo "Running simulation mode with $w workers for duration of $duration"
-  timeout -s SIGKILL $duration java -cp $tlcjar tlc2.TLC -simulate -depth $depth -workers $w -config MC.cfg MC.tla > tlc.out
+  timeout -s SIGTERM $duration java -cp $tlcjar tlc2.TLC -simulate -depth $depth -workers $w -config MC.cfg MC.tla > tlc.out
   printf $w >> $statsfile 
   printf "," >> $statsfile
   throughput=`grep "states.min" tlc.out | tail -1`
