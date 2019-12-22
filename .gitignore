@@ -2,3 +2,6 @@ results/
 states/
 stats.csv
 *.out
+*.png
+*.svg
+.vscode/
