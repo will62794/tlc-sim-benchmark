@@ -6,7 +6,7 @@ set style line 1 \
     linecolor rgb '#0060ad' \
     linetype 1 linewidth 1 \
     pointtype 7 pointsize 0.5
-set xlabel "# CPU Cores"
+set xlabel "# TLC Workers"
 set ylabel "States/Minute"
 set xtics 0,2,48
 set xrange [0:48]
