@@ -13,7 +13,7 @@ tlcjar="tla2tools-faster-progress.jar"
 # Run simulator for several seconds for different worker counts.
 # Collect state throughput stats for each.
 for w in {1,2,4,8,12,16,20,24,28,32,36,40,44,48}; do
-  duration="30s"
+  duration="60s"
   depth="50"
   echo "Running simulation mode with $w workers for duration of $duration"
   timeout -s SIGTERM $duration java -cp $tlcjar tlc2.TLC -seed 0 -simulate -depth $depth -workers $w -config MC.cfg MC.tla | tee tlc.out
